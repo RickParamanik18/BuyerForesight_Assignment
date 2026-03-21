@@ -1,4 +1,9 @@
 const data = require("../data/sample.json");
+const { v4: uuidv4 } = require("uuid");
+const fs = require("fs");
+const path = require("path");
+
+const dataPath = path.join(__dirname, "../data/sample.json");
 
 const getUsers = (search, sort, order) => {
     //we are assuming that user will search by name
@@ -28,4 +33,20 @@ const getUser = (id) => {
     return user;
 };
 
-module.exports = { getUsers, getUser };
+const createUser = ({ name, email, password, phone }) => {
+    const id = uuidv4();
+    if (!name || !email || !password || !phone) return null;
+    const newUser = {
+        id,
+        name,
+        email,
+        password,
+        phone,
+    };
+    data.push(newUser);
+    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+
+    return newUser;
+};
+
+module.exports = { getUsers, getUser, createUser };
