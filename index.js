@@ -1,5 +1,6 @@
 const express = require("express");
 const mainRouter = require("./routers/index.router");
+const errorHandler = require("./utils/errorHandler");
 
 const app = express();
 const PORT = 3000;
@@ -10,6 +11,8 @@ app.use("/api", mainRouter);
 app.get("/", (req, res) => {
     res.send("Hello, World!");
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

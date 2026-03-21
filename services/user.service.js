@@ -2,8 +2,12 @@ const data = require("../data/sample.json");
 const { v4: uuidv4 } = require("uuid");
 const fs = require("fs");
 const path = require("path");
+const AppError = require("../utils/AppError");
 
 const dataPath = path.join(__dirname, "../data/sample.json");
+const writeToFile = (data) => {
+    fs.writeFileSync(dataPath, JSON.stringify(data, null, 4));
+};
 
 const getUsers = (search, sort, order) => {
     //we are assuming that user will search by name
@@ -25,17 +29,14 @@ const getUsers = (search, sort, order) => {
 };
 
 const getUser = (id) => {
-    let user = data.filter((user) => {
-        if (user.id == id) return true;
-        else return false;
-    });
+    const index = data.findIndex((user) => user.id === id);
+    if (index === -1) return null;
 
-    return user;
+    return data[index];
 };
 
 const createUser = ({ name, email, password, phone }) => {
     const id = uuidv4();
-    if (!name || !email || !password || !phone) return null;
     const newUser = {
         id,
         name,
@@ -44,26 +45,29 @@ const createUser = ({ name, email, password, phone }) => {
         phone,
     };
     data.push(newUser);
-    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+    writeToFile(data);
 
     return newUser;
 };
 
 const updateUser = (id, updateData) => {
     const index = data.findIndex((user) => user.id === id);
-    if (index === -1) return null;
+    if (index === -1) {
+        throw new AppError("User not found", 404);
+    }
 
     data[index] = { ...data[index], ...updateData };
-    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+    writeToFile(data);
     return data[index];
 };
 
 const deleteUser = (id) => {
     const index = data.findIndex((user) => user.id === id);
-    if (index === -1) return null;
+    if (index === -1) {
+        throw new AppError("User not found", 404);
+    }
     data.splice(index, 1);
-    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
-    return true;
+    writeToFile(data);
 };
 
 module.exports = { getUsers, getUser, createUser, updateUser, deleteUser };
