@@ -1,6 +1,7 @@
 const userService = require("../services/user.service");
 const asyncHandler = require("../utils/asyncHanlder");
 const AppError = require("../utils/AppError");
+const { isValidEmail, isValidPhone } = require("../utils/validation");
 
 const getUsers = asyncHandler(async (req, res) => {
     const { search = "", sort = "id", order = "asc" } = req.query; //by defauslt we will sort by id in ascending order
@@ -25,6 +26,12 @@ const createUser = asyncHandler(async (req, res) => {
     if (!name || !email || !password || !phone) {
         throw new AppError("All fields are required", 400);
     }
+    if (!isValidEmail(email)) {
+        throw new AppError("Invalid email format", 400);
+    }
+    if (!isValidPhone(phone)) {
+        throw new AppError("Invalid phone format", 400);
+    }
     const user = userService.createUser({ name, email, password, phone });
     res.status(200).json({
         success: true,
@@ -42,6 +49,12 @@ const updateUser = asyncHandler(async (req, res) => {
 
     if (Object.keys(updateData).length === 0) {
         throw new AppError("No fields to update", 400);
+    }
+    if (updateData.email && !isValidEmail(updateData.email)) {
+        throw new AppError("Invalid email format", 400);
+    }
+    if (updateData.phone && !isValidPhone(updateData.phone)) {
+        throw new AppError("Invalid phone format", 400);
     }
 
     const user = userService.updateUser(id, updateData);
