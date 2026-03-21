@@ -58,4 +58,12 @@ const updateUser = (id, updateData) => {
     return data[index];
 };
 
-module.exports = { getUsers, getUser, createUser, updateUser };
+const deleteUser = (id) => {
+    const index = data.findIndex((user) => user.id === id);
+    if (index === -1) return null;
+    data.splice(index, 1);
+    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+    return true;
+};
+
+module.exports = { getUsers, getUser, createUser, updateUser, deleteUser };

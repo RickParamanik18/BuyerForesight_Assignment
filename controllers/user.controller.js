@@ -41,4 +41,21 @@ const updateUser = (req, res) => {
         data: user,
     });
 };
-module.exports = { getUser, getUsers, createUser, updateUser };
+
+const deleteUser = (req, res) => {
+    const { id } = req.params;
+    const deleted = userService.deleteUser(id);
+    if (!deleted) {
+        return res.status(404).json({
+            success: false,
+            message: "User not found",
+        });
+    } else {
+        res.status(200).json({
+            success: true,
+            message: "User deleted successfully",
+        });
+    }
+};
+
+module.exports = { getUser, getUsers, createUser, updateUser, deleteUser };
