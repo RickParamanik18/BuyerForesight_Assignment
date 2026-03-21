@@ -49,4 +49,13 @@ const createUser = ({ name, email, password, phone }) => {
     return newUser;
 };
 
-module.exports = { getUsers, getUser, createUser };
+const updateUser = (id, updateData) => {
+    const index = data.findIndex((user) => user.id === id);
+    if (index === -1) return null;
+
+    data[index] = { ...data[index], ...updateData };
+    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+    return data[index];
+};
+
+module.exports = { getUsers, getUser, createUser, updateUser };

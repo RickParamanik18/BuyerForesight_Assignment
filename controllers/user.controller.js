@@ -26,4 +26,19 @@ const createUser = (req, res) => {
         data: user,
     });
 };
-module.exports = { getUser, getUsers, createUser };
+
+const updateUser = (req, res) => {
+    const { id } = req.params;
+    const updateData = {};
+    const userFields = ["name", "email", "password", "phone"];
+    userFields.forEach((field) => {
+        if (req.body[field]) updateData[field] = req.body[field];
+    });
+
+    const user = userService.updateUser(id, updateData);
+    res.status(200).json({
+        success: true,
+        data: user,
+    });
+};
+module.exports = { getUser, getUsers, createUser, updateUser };
